@@ -36,6 +36,10 @@ app.get(BASE_API_URL+"/co2-stats",(req,res)=>{
     res.send(JSON.stringify(co2,null,2));
 
 });
+app.get(BASE_API_URL+"/co2-stats/docs",(req,res)=>{
+    res.redirect("https://documenter.getpostman.com/view/19481636/UVsTphXD");
+
+});
 
 app.get(BASE_API_URL+"/co2-stats/docs",(req,res)=>{
     res.redirect(API_DOC_PORTAL);
