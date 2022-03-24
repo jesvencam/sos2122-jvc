@@ -9,43 +9,20 @@ app.use(bodyParser.json());
 
 
 
-//#####################   Belén Rodríguez (belrodsal) ####################//
-//Get Y Post con datos Belén Rodríguez (belrodsal)
-var coalStats = [
-    {
-        country:"Spain",
-        milesTon:123456
-    },
-    {
-        country:"Australia",
-        milesTon:56789
-    }
-];
-
-app.get(BASE_API_URL+"/coalStats",(req,res)=>{
-    res.send(JSON.stringify(coalStats,null,2));
-});
-
-app.post(BASE_API_URL+"/coalStats",(req,res)=>{
-    coalStats.push(req.body);
-    res.sendStatus(201,"CREATED");
-});
-
-
 
 //######################   API Jesús Vena Campos  ###############################//
 
 
 var co2 = [
     {		
-        country : "España",
+        country : "spain",
         year : 2020,
         co2_tot : 214.817,
         co2_kg : 0.13,
         co2_tpc : 4.62
     },
     {
-        country : "Alemania",
+        country : "alemania",
         year : 2017,
         co2_tot : 250.177,
         co2_kg : 0.15,
@@ -53,37 +30,17 @@ var co2 = [
     }
 ];
 
+//##########################################
+//GET
 app.get(BASE_API_URL+"/co2-stats",(req,res)=>{
     res.send(JSON.stringify(co2,null,2));
 
 });
 
-app.get(BASE_API_URL+"/co2-stats",(req,res)=>{
+app.get(BASE_API_URL+"/co2-stats/docs",(req,res)=>{
     res.redirect(API_DOC_PORTAL);
 
 });
-
-
-app.post(BASE_API_URL+"/co2-stats",(req,res)=>{
-    co2.push(req.body);
-    res.sendStatus(201,"CREATED");
-
-});
-//ESTO BORRA TODOS LOS RECURSO  
-app.delete(BASE_API_URL+"/co2-stats", (req, res)=>{
-    co2 = [];
-    res.sendStatus(200,"OK");
-});
-
-
-app.delete(BASE_API_URL+"/co2-stats/:country", (req, res)=>{
-    var countryName = req.params.country;
-    co2.filter((c)=>{
-        return(c.country!=countryName);
-    })
-    res.sendStatus(200,"OK");
-});
-
 
 app.get(BASE_API_URL+"/co2-stats/:country", (req, res)=>{
     var countryName = req.params.country;
@@ -100,6 +57,85 @@ app.get(BASE_API_URL+"/co2-stats/:country", (req, res)=>{
 
 
 });
+
+//##########################################
+
+//POST
+
+
+app.post(BASE_API_URL+"/co2-stats",(req,res)=>{
+    co2.push(req.body);
+    res.sendStatus(201,"CREATED");
+
+});
+
+app.post(BASE_API_URL+"/co2-stats/:country",(req,res)=>{
+    var countryName = req.params.country;
+    filteredCountries = co2.filter((c)=>{
+        return(c.country == countryName);
+    });
+    if(filteredCountries == 0){
+        res.sendStatus(409,"Conflict");
+    }else{
+        res.sendStatus(405,"Method Not Allowed");
+    }
+  
+
+});
+
+//##########################################
+
+//PUT
+
+
+app.put(BASE_API_URL+"/co2-stats",(req,res)=>{
+    res.sendStatus(405,"Method Not Allowed");
+
+})
+
+app.put(BASE_API_URL+"/co2-stats/:country/:year",(req,res)=>{
+    var countryName = req.params.country;
+    var yearReq = req.params.year;
+    filteredCountryYear = co2.filter((c)=>{
+        return(c.country == countryName && c.year == yearReq);
+    });
+    if(filteredCountryYear == 0){
+        res.sendStatus(400,"Bad Request");
+    }else{
+        co2.push(req.body)  ;
+        //co2.splice(filteredCountryYear);
+
+        res.sendStatus(200,"OK");
+    }
+})
+
+
+//##########################################
+//DELETE
+
+
+app.delete(BASE_API_URL+"/co2-stats/:country", (req, res)=>{
+    var countryName = req.params.country;
+    co2.filter((c)=>{
+        return(c.country!=countryName);
+    })
+    res.sendStatus(200,"OK");
+});
+
+//ESTO BORRA TODOS LOS RECURSO  
+app.delete(BASE_API_URL+"/co2-stats", (req, res)=>{
+    co2 = [];
+    res.sendStatus(200,"OK");
+});
+
+
+
+
+
+
+
+
+
 
 //##########################################
 
